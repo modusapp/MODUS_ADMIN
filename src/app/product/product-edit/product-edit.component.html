@@ -1,0 +1,258 @@
+<!--component html goes here -->
+<h1 class="page-title">Product <small><small>Edit Product</small></small></h1>
+
+<section class="widget container" widget>
+
+  <form *ngIf="formReady" class="form-horizontal" [formGroup]="form">
+    <legend> Edit Product </legend>
+
+    <div class="form-group row">
+      <label for="name" class="col-md-3 form-control-label text-md-right">Name</label>
+      <div class="col-md-8">
+        <input type="text" id="name" class="form-control" formControlName="name" placeholder="Product name">
+        <div *ngIf="form.controls['name'].invalid && (form.controls['name'].dirty || form.controls['name'].touched)"
+          class="alert alert-danger">
+          <div *ngIf="form.controls['name'].errors.required">
+            Name is required
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="base_price" class="col-md-3 form-control-label text-md-right">Base Price</label>
+      <div class="col-md-3 input-group mb-2 mr-sm-2 mb-sm-0">
+        <span class="input-group-addon input-addon">$</span>
+
+        <input type="number" id="base_price" class="form-control" formControlName="base_price" placeholder="Base price">
+        <div *ngIf="form.controls['base_price'].invalid && (form.controls['base_price'].dirty || form.controls['base_price'].touched)"
+          class="alert alert-danger">
+          <div *ngIf="form.controls['base_price'].errors.required">
+            Base Price is required
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="category" class="col-md-3 form-control-label text-md-right">Category</label>
+
+      <div class="col-md-3">
+        <select class="form-control" id="category" formControlName="category">
+          <option *ngFor="let category of categories | async" [value]="category.id">{{category.name}}</option>
+
+        </select>
+        <div *ngIf="form.controls['category'].invalid && (form.controls['category'].dirty || form.controls['category'].touched)"
+          class="alert alert-danger">
+          <div *ngIf="form.controls['category'].errors.required">
+            Please select a product category
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="description" class="col-md-3 form-control-label text-md-right">Description</label>
+      <div class="col-md-8">
+        <textarea rows="4" class="form-control" id="description" formControlName="description"></textarea>
+        <div *ngIf="form.controls['description'].invalid && (form.controls['description'].dirty || form.controls['description'].touched)"
+          class="alert alert-danger">
+          <div *ngIf="form.controls['description'].errors.required">
+            Description Required
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-md-3 form-control-label text-md-right">In Stock</label>
+      <div class="col-md-8">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" formControlName="in_stock">
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-md-3 form-control-label text-md-right">Available on Mobile</label>
+      <div class="col-md-8">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" formControlName="available_on_mobile">
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-md-3 form-control-label text-md-right">On Sale</label>
+      <div class="col-md-8">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" formControlName="on_sale">
+        </div>
+      </div>
+    </div>
+    <div class="form-group row animated fadeInUp" [hidden]="!this.form.get('on_sale').value">
+      <label for="base_price" class="col-md-3 form-control-label text-md-right">Sales Base Price</label>
+      <div class="col-md-3 input-group mb-2 mr-sm-2 mb-sm-0">
+        <span class="input-group-addon input-addon">$</span>
+
+        <input type="number" id="base_price" class="form-control" formControlName="sale_base_price" placeholder="Sale base price">
+        <div *ngIf="form.controls['sale_base_price'].invalid && (form.controls['sale_base_price'].dirty || form.controls['sale_base_price'].touched)"
+          class="alert alert-danger">
+          <div *ngIf="form.controls['sale_base_price'].errors.required">
+            Sale Base Price is required
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="photo" class="col-md-3 form-control-label text-md-right">Photo </label>
+      <div class="col-md-4">
+        <span class="form-group-btn">
+          <span class="btn btn-default btn-file">
+            Browse… <input type="file" (change)="uploadImage($event)">
+          </span>
+          <input type="text" hidden="true" formControlName="photo" value="{{downloadURL|async}}">
+          <small style="color:red" *ngIf="form.controls['photo'].invalid">Product requires at least 1 image </small>
+          <small>{{ uploadPercent | async }}</small>
+
+        </span>
+
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-4 ">
+        <img id='img-upload' *ngIf="form.get('photo').valid" style="max-width:70%; max-height:70%;" class="img-thumbnail"
+          [attr.src]="form.get('photo').value" />
+        <p>*Images are automatically scaled & compressed to ensure better loading times in-app</p>
+      </div>
+    </div>
+
+    <br><br>
+    <legend class="options-header">Product Options<div class="pull-right "><a href="javascript:void(0)" (click)="addOption()"><i
+            class="fa fa-plus"></i></a></div>
+    </legend>
+    <div formArrayName="options">
+      <div *ngFor="let option of getFormOptions().controls; let i=index">
+
+        <div [formGroupName]='i' class="option-box">
+
+          <div *ngIf="validOption(i)" class="alert alert-danger">
+          <div>
+            Please select either Checkbox or Radio
+          </div>
+        </div>
+          <div class="form-group row">
+            <label for="option_name" class="col-md-3 form-control-label text-md-right">Name</label>
+            <div class="col-md-6">
+              <input type="text" id="option_name" class="form-control" formControlName="option_name" placeholder="Option name">
+
+            </div>
+            <div class="col-md-2">
+              <button class="btn btn-danger" (click)="removeOption(i)">Remove Option </button>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="radio" class="col-md-3 form-control-label text-md-right">Radio</label>
+            <div class="col-md-8">
+              <input type="checkbox" id="option_name"  (change)="switchRequired(i,$event.target.checked)" class="form-check-input" [disableControl]="(isCheckbox(i) || hasQuantity(i))"
+                formControlName="radio" placeholder="Option name">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="has_checkbox" class="col-md-3 form-control-label text-md-right">Checkbox</label>
+            <div class="col-md-8">
+              <input type="checkbox" id="has_checkbox" class="form-check-input" (change)="switchRequired(i, $event.target.checked? false:false)" [disableControl]="isRadio(i)"
+                formControlName="has_checkbox" placeholder="Option name">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="has_quantity" class="col-md-3 form-control-label text-md-right">Has Quantity</label>
+            <div class="col-md-8">
+              <input type="checkbox" id="has_quantity" class="form-check-input" [disableControl]="isRadio(i)" formControlName="has_quantity"
+                placeholder="Option name">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="required" class="col-md-3 form-control-label text-md-right">Required</label>
+            <div class="col-md-8">
+              <input type="checkbox" id="required"  class="form-check-input" [disableControl]="(isCheckbox(i) || isRadio(i))"
+                formControlName="required" placeholder="Option name">
+            </div>
+          </div>
+          <!-- <div class="form-group row">
+            <label for="required" class="col-md-3 form-control-label text-md-right">Type</label>
+            <div class="col-md-8">
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input"  name="radio" type="radio" id="gridRadios1" formControlName="radio"
+                    >
+                  Radio </label>
+              </div>
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input"  name="has_checkbox" type="radio"  id="gridRadios2" formControlName="has_checkbox"
+                   >
+                  Checkbox
+                </label>
+              </div>
+            </div>
+          </div> -->
+          <div class="form-group row" formArrayName="terms">
+            <label for="option_name" class="col-md-3 form-control-label text-md-right">
+              Terms <span style="padding-left:4px;"><a href="javascript:void(0)" (click)="addTerm(i)"><i class="fa fa-plus"></i></a></span>
+            </label>
+            <br><br>
+            <div class="col-md-9 ">
+              <div class="form-group row" *ngFor="let term of form.get('options').controls[i].get('terms').controls; let k = index;"
+                [formGroupName]="k">
+                <div class="input-group col-md-5 ">
+                  <span class="input-group-addon input-addon">Name</span>
+                  <input type="text" class="form-control" formControlName="name" placeholder="Option name">
+                  <div class="input-group-btn">
+
+                  </div>
+                </div>
+                <div class="input-group col-md-3 col-md-offset-2 ">
+                  <span class="input-group-addon input-addon">Add Price {{term.default}}</span>
+                  <input type="text" class="form-control" formControlName="add_price" placeholder="Option name">
+                </div>
+                <div class="col-md-4" style="padding-top:6px;">
+                  <div *ngIf="isRequired(i) && isRadio(i)" class="default-area">
+                    <a href="javascript:void(0)" *ngIf="!getTerm(i,k) " class="badge badge-info" (click)="setDefault(i,k)">Set
+                      Default</a>
+
+                    <span class="badge badge-pill badge-primary" *ngIf="getTerm(i,k)">Default</span>
+                  </div>
+                  <a href="javascript:void(0)" style="padding-left:30px;" (click)="removeTerm(i,k)" *ngIf="form.get('options').controls[i].get('terms').controls.length > 1"><i
+                      class="fa fa-minus"> </i> </a>
+
+                </div>
+              </div>
+            </div>
+            <!-- <div class="row" *ngFor="let term of form.get('options').controls[i].get('terms').controls; let k = index;">
+
+              <div style=" display: flex;flex-basis: 100%;flex-wrap: wrap;" [formGroupName]="k">
+                <label class=" col-md-4 form-control-label text-md-right" for="option_name">Name</label>
+                <div class="col-md-8">
+                  <input type="text" id="option_name" class="form-control" formControlName="name" placeholder="Option name">
+
+                </div>
+                <label class=" col-md-4 form-control-label text-md-right" for="option_name">Additional Price</label>
+                <div class="col-md-3">
+                  <input type="number" id="option_name" class="form-control" formControlName="add_price" placeholder="Option name">
+
+                </div>
+              </div>
+              <br>
+            </div> -->
+          </div>
+        </div>
+        <br><br>
+      </div>
+    </div>
+    <br><br>
+
+    <div class="form-group row">
+      <div class="offset-md-4 col-md-7 col-12 btn-group ">
+        <button (click)="saveProduct()" class="btn btn-primary">Save Changes</button>
+        <button type="button" (click)="cancel()" class="btn btn-inverse">Cancel</button>
+      </div>
+    </div>
+
+
+  </form>
+</section>

@@ -1,0 +1,87 @@
+<div *ngIf="!activeModalFilter">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">YOU ARE HERE</li>
+    <li class="active breadcrumb-item">Products</li>
+  </ol>
+  <div class="product-grid">
+    <!--<filter class="product-filters" [filters]="filters"></filter> -->
+    <div class="filters">
+      <div class="filters-group">
+        <div class="btn-group dropdown" dropdown>
+          <button id="dropdown-btn" class="btn btn-default dropdown-toggle" dropdownToggle>
+            &nbsp; Category &nbsp;
+            <i class="fa fa-caret-down"></i>
+          </button>
+          <ul *dropdownMenu class="dropdown-menu" role="menu" aria-labelledby="dropdown-btn">
+            <li *ngFor="let category of categoryList" role="menuitem"><a (click)="filterByCategory(category.id)" class="dropdown-item">{{category.name}}</a></li>
+          </ul>
+        </div>
+
+      </div>
+      <div class="filters-group">
+        <div class="form-check form-check-inline">
+          <label class="form-check-label" for="inlineCheckbox1">On Sale</label>
+
+          <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" (change)="filterBySale($event.target.checked)">
+        </div>
+      </div>
+      <div class="filters-group">
+        <div class="form-check form-check-inline">
+          <label class="form-check-label" for="inlineCheckbox1" >Out of Stock</label>
+
+          <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1" (change)="filterByStock($event.target.checked)">
+        </div>
+      </div>
+
+      <!--<div class="filters-group">
+    {{filters.sortFilter.name}}
+    <filter-dropdown [dropdown]="filters.sortFilter.items"></filter-dropdown>
+  </div> -->
+    </div>
+    <div class="product-mobile-filters">
+      <button class="btn btn-transparent btn-lg" (click)="openModal(1)">
+        Sort <i class="fa fa-2x fa-angle-down"></i>
+      </button>
+      <button class="btn btn-transparent btn-lg" (click)="openModal(2)">
+        Filter <i class="fa fa-2x fa-angle-down"></i>
+      </button>
+    </div>
+    <div class="container-fluid" style="padding-bottom:10px;">
+      <div class="row">
+
+        <div class="col align-self-start">
+          <a class="btn btn-primary" [routerLink]=" ['/app/product/add'] "> Add </a>
+        </div>
+
+      </div>
+    </div>
+    <div class="products">
+      <div *ngFor="let product of products | async" class="product-card">
+      <a [routerLink]="['/app/product/product-detail/', product.id]">
+        <div class="card-photo"  [ngStyle]="{'background-image': 'url(' + product.photo + ')'}">
+          <div class="badge badge-success" *ngIf="product.on_sale">Sale</div>
+          <div class="badge badge-danger" *ngIf="!product.in_stock">Out of Stock</div>
+
+        </div>
+        </a>
+        <h5 class="card-title"><a [routerLink]="['/app/product/product-detail/', product.id]"> {{product.name}} </a></h5>
+        <div class="card-description">{{product.description}}</div>
+        <div class="price" *ngIf="!product.on_sale">
+          ${{product.base_price}}
+        </div>
+        <div class="price price-sale" *ngIf="product.on_sale">
+          {{calculatePercent(product.base_price,product.sale_base_price) | percent}} off
+          <span class="new"> {{product.sale_base_price | currency}}</span>
+        </div>
+  <br>
+        <div class="btn-group">
+        <button [routerLink]="['/app/product/product-detail/', product.id]" class="btn btn-dark">View</button>
+
+        <button [routerLink]="['/app/product/edit/', product.id]" class="btn btn-primary">Edit</button>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

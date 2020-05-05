@@ -1,0 +1,109 @@
+<div class="js-sidebar-content">
+  <header class="logo d-none d-md-block">
+    <a href="index.html">{{config.name}}</a>
+  </header>
+  <div class="sidebar-status d-md-none dropdown" dropdown [autoClose]="false"
+    (isOpenChange)="toggleSidebarOverflow($event)" placement="bottom left">
+    <a [routerLink]="" class="dropdown-toggle" dropdownToggle>
+      <span class="thumb-sm avatar float-right">
+        <img class="rounded-circle" src="../../../assets/img/logo.png" alt="...">
+      </span>
+      <!-- .circle is a pretty cool way to add a bit of beauty to raw data.
+           should be used with bg-* and text-* classes for colors -->
+      <span class="circle bg-warning fw-bold text-gray-dark">
+        13
+      </span>
+      &nbsp;
+      {{this.auth.profileInfo?.firstName}} <strong>{{this.auth.profileInfo?.lastName}}</strong>
+      <b class="caret"></b>
+    </a>
+  </div>
+  <!-- main notification links are placed inside of .sidebar-nav -->
+  <ul class="sidebar-nav">
+    <!-- <li>
+      <a [routerLink]=" ['dashboard'] ">
+        <span class="icon">
+          <i class="fa fa-child"></i>
+        </span>
+        Dashboard
+      </a>
+    </li> -->
+    <li>
+      <a [routerLink]=" ['/app/orders/view'] ">
+        <span class="icon">
+          <i class="fa fa-pencil-square-o"></i>
+        </span>
+        Orders
+        <span class="badge badge-danger" *ngIf="orderService.orderCount  > 0 && this.router.url !== '/app/orders/view'">
+          {{orderService.orderCount}}
+        </span>
+      </a>
+    </li>
+    <li>
+      <a [routerLink]=" ['/app/orders/history'] ">
+        <span class="icon">
+          <i class="fa fa-history"></i>
+        </span>
+        Order History
+      </a>
+    </li>
+     <li>
+      <a [routerLink]=" ['/app/orders/map'] ">
+        <span class="icon">
+          <i class="fa fa-location-arrow"></i>
+        </span>
+        View Map
+      </a>
+    </li> 
+    <li *ngIf="(auth.profile | async)?.admin">
+      <a class="collapsed in" href="#sidebar-products" data-toggle="collapse" data-parent="#sidebar"
+        aria-expanded="true">
+        <span class="icon">
+          <i class="fa fa-cutlery"></i>
+        </span>
+        Products
+        <i class="toggle fa fa-angle-down"></i>
+      </a>
+      <ul id="sidebar-products" class="collapse" style="">
+        <li id="addProduct" class=""><a [routerLink]=" ['/app/product/add'] ">Add New Product</a></li>
+        <li id="viewProduct" class=""><a [routerLink]=" ['/app/product'] ">View Products</a></li>
+      </ul>
+    </li>
+    <li *ngIf="(auth.profile | async)?.admin">
+      <a class="collapsed in" id="categpry" href="#sidebar-pages" data-toggle="collapse" data-parent="#sidebar"
+        aria-expanded="true">
+        <span class="icon">
+          <i class="fa fa-sort-amount-asc" aria-hidden="true"></i>
+        </span>
+        Categories
+        <i class="toggle fa fa-angle-down"></i>
+      </a>
+      <ul id="sidebar-pages" class="collapse" style="" data-parent="#category">
+        <li id="addCategory" class=""><a [routerLink]=" ['/app/category/add'] ">Add New Category</a></li>
+        <li id="viewCategory" class=""><a [routerLink]=" ['/app/category'] ">View Categories</a></li>
+      </ul>
+    </li>
+    <li *ngIf="(auth.profile | async)?.admin">
+      <a class="collapsed in" href="#sidebar-users" data-toggle="collapse" data-parent="#sidebar" aria-expanded="true">
+        <span class="icon">
+          <i class="fa fa-users"></i>
+        </span>
+        Users
+        <i class="toggle fa fa-angle-down"></i>
+      </a>
+      <ul id="sidebar-users" class="collapse" style="">
+        <li id="addProduct" class=""><a [routerLink]=" ['/app/users/add'] ">Add New User</a></li>
+        <li id="viewProduct" class=""><a [routerLink]=" ['/app/users/view'] ">View Users</a></li>
+      </ul>
+    </li>
+    <li *ngIf="configFn.isScreen('xs') || configFn.isScreen('sm')">
+      <a (click)="logout()">
+        <span class="icon">
+          <i class="fa fa-sign-out"></i>
+        </span>
+        Logout
+      </a>
+    </li>
+  </ul>
+
+</div>

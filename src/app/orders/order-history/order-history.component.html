@@ -1,0 +1,84 @@
+<div class="widget-container">
+  <div class="row">
+    <div class="col-lg-12">
+      <section class="widget">
+        <header style="padding-bottom:50px;">
+          <h5>
+            Order History
+          </h5>
+
+          <div class="widget-controls" stly [formGroup]="filterForm">
+            <div class="btn-group" btnRadioGroup formControlName="status">
+              <label class="btn btn-info" btnRadio="Pending" uncheckable tabindex="0" role="button">Pending</label>
+              <label class="btn btn-success" btnRadio="Completed" uncheckable tabindex="0"
+                role="button">Completed</label>
+              <label class="btn btn-warning" btnRadio="Processing" uncheckable tabindex="0"
+                role="button">Processing</label>
+            </div>
+          </div>
+
+        </header>
+        <div class="widget-body ">
+
+          <p-table #dt [value]="orders | async" [autoLayout]="true" [responsive]="true"
+            tableStyleClass="history-table table" styleClass="history-table-wrapper" [paginator]="true" [rows]="10">
+            <ng-template pTemplate="header">
+              <tr [ngClass]="'history-table-head'">
+                <th>ID
+                  <input  pInputText type="text" (input)="dt.filter($event.target.value, 'id', 'contains')">
+
+                </th>
+                <th [pSortableColumn]="'created_at'">Date <p-sortIcon class="sort-icon" [field]=""></p-sortIcon>
+                </th>
+                <th>Status</th>
+                <th [pSortableColumn]="'total_items'">Number of Items <p-sortIcon [field]=""></p-sortIcon>
+                </th>
+
+                <th>Customer Name</th>
+                <th>Customer Phone Number</th>
+                <th [pSortableColumn]="'delivery_type'">Order Type <p-sortIcon [field]=""></p-sortIcon></th>
+                <th [pSortableColumn]="'total_price'">Total <p-sortIcon [field]=""></p-sortIcon>
+                </th>
+                <th>Handled By</th>
+                <th> </th>
+
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-order>
+              <tr [ngClass]="'history-table-body'">
+                <td>{{order.id}}</td>
+                <td>{{order.created_at | amCalendar:nextDay}} </td>
+                <td>
+                  <span class="badge badge-info" *ngIf="getStatus(order) === 'Pending'">
+                    Pending
+                  </span>
+                  <span class="badge badge-warning" *ngIf="getStatus(order) === 'Processing'">
+                    Processing
+                  </span>
+                  <span class="badge badge-success" *ngIf="getStatus(order) === 'Completed'">
+                    Completed
+                  </span>
+                </td>
+                <td>{{order.total_items}}</td>
+                <td>{{order.customer_name? order.customer_name: ''}}</td>
+                <td>{{order.customer_phone? order.customer_phone: ''}}</td>
+                <td> {{ order?.delivery_type ? mapDeliveryType(order?.delivery_type) : "Pick Up" }}
+                </td>
+                <td>{{order.total_price | currency}}</td>
+                <td>
+                  <div class="name-container" *ngIf="order.user">
+                    <div class="name">
+                      {{order.user? getInitials(order.user.firstName, order.user.lastName):'' }}
+                    </div>
+                  </div>
+                </td>
+                <td><a [routerLink]="['/app/orders/details',order.id]" class="btn btn-warning">View </a></td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

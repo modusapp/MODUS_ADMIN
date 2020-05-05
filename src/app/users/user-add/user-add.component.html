@@ -1,0 +1,135 @@
+<!--component html goes here -->
+<h1 class="page-title">User <small><small>Add New User</small></small></h1>
+
+<section class="widget container" widget>
+
+  <form class="form-horizontal" [formGroup]="form">
+    <legend> Add New User </legend>
+
+    <div class="form-group row">
+      <label for="name" class="col-md-3 form-control-label text-md-right">First Name*</label>
+      <div class="col-md-8">
+        <input type="text" id="firstName" class="form-control" formControlName="firstName" placeholder="first name">
+        <div *ngIf="form.controls['firstName'].invalid && (form.controls['firstName'].dirty || form.controls['firstName'].touched)"
+          class="alert alert-danger">
+          <div *ngIf="form.controls['firstName'].errors.required">
+            First Name is required
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="name" class="col-md-3 form-control-label text-md-right">Last Name*</label>
+      <div class="col-md-8">
+        <input type="text" id="lastName" class="form-control" formControlName="lastName" placeholder="last name">
+        <div *ngIf="form.controls['lastName'].invalid && (form.controls['lastName'].dirty || form.controls['lastName'].touched)"
+          class="alert alert-danger">
+          <div *ngIf="form.controls['lastName'].errors.required">
+            Last Name is required
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="name" class="col-md-3 form-control-label text-md-right">Email*</label>
+      <div class="col-md-8">
+        <input type="text" id="email" class="form-control" formControlName="email" placeholder="email">
+        <div *ngIf="form.controls['email'].invalid && (form.controls['email'].dirty || form.controls['email'].touched)"
+          class="alert alert-danger">
+          <div *ngIf="form.controls['email'].errors?.required">
+            Email is required
+          </div>
+          <div *ngIf="form.controls['email'].errors?.email">
+            Email not valid.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="name" class="col-md-3 form-control-label text-md-right">Phone Number*</label>
+      <div class="col-md-8">
+        <input type="text" id="phoneNumber" class="form-control" formControlName="phoneNumber" placeholder="phone number" mask="(000) 000-0000">
+        <div *ngIf="form.controls['phoneNumber'].invalid && (form.controls['phoneNumber'].dirty || form.controls['phoneNumber'].touched)"
+          class="alert alert-danger">
+          <div *ngIf="form.controls['phoneNumber'].errors.required">
+            Phone Number is required
+          </div>
+<div *ngIf="form.controls['phoneNumber'].errors.invalidNumber">
+            invalid phone number
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="name" class="col-md-3 form-control-label text-md-right">Password*</label>
+      <div class="col-md-8">
+        <input type="password" id="password" class="form-control" formControlName="password" placeholder="password">
+        <div *ngIf="form.controls['password'].invalid && (form.controls['password'].dirty || form.controls['password'].touched)"
+          class="alert alert-danger">
+          <div *ngIf="form.controls['password'].errors.required">
+            Password is required
+          </div>
+
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-group row">
+      <label for="name" class="col-md-3 form-control-label text-md-right">Confirm Password*</label>
+      <div class="col-md-8">
+        <input type="password" id="confirmPassword" class="form-control" formControlName="confirmPassword" placeholder="confirm password">
+        <div *ngIf="form.controls['confirmPassword'].invalid && (form.controls['confirmPassword'].dirty || form.controls['confirmPassword'].touched)"
+          class="alert alert-danger">
+          <div *ngIf="form.controls['confirmPassword'].errors.required">
+            Please Confirm Password
+          </div>
+
+        </div>
+        <div class="alert alert-danger" *ngIf="form.errors?.notSame && (form.controls['confirmPassword'].dirty || form.controls['confirmPassword'].touched) && (form.controls['password'].dirty || form.controls['password'].touched)">
+        passwords do not match.
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-md-3 form-control-label text-md-right">Admin</label>
+      <div class="col-md-8">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" formControlName="admin">
+
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="photo" class="col-md-3 form-control-label text-md-right">Photo</label>
+      <div class="col-md-4">
+        <span class="form-group-btn">
+          <span class="btn btn-default btn-file">
+            Browse… <input type="file" (change)="uploadImage($event)" accept="image/*">
+          </span>
+          <input type="text" hidden="true" formControlName="photoURL" value="{{downloadURL|async}}">
+
+          <small>{{ uploadPercent | async | percent }}</small>
+
+        </span>
+
+      </div>
+    </div>
+    <div class="row justify-content-center" *ngIf="form.get('photoURL').value">
+      <div class="col-md-6 ">
+     
+        <div class="image-holder">
+          <div class="image-thumb" [ngStyle]="{'background-image': 'url('+ form.get('photoURL').value+')' }"></div>
+        </div>
+      </div>
+    </div>
+    <br><br>
+    <div class="form-group row">
+      <div class="offset-md-4 col-md-7 col-12 btn-group ">
+        <button (click)="saveUser()" class="btn btn-primary">Save Changes</button>
+        <button type="button" class="btn btn-inverse">Cancel</button>
+      </div>
+    </div>
+
+
+  </form>
+</section>

@@ -1,0 +1,128 @@
+<h1 class="page-title">Customer Map</h1>
+<div class="widget-container">
+  <div class="row">
+    <div class="col-md-12">
+      <section class="widget">
+        <header class="bb">
+          <h6>Track <span class="fw-semi-bold">Orders</span></h6>
+
+        </header>
+
+        <div class="widget-body">
+          <mgl-map #map     [style]="'mapbox://styles/mapbox/dark-v9'"
+          [zoom]="[12]" [center]="[-87.92899999999997,42.1392]"
+            (load)=" initMap($event)">
+            <mgl-control mglNavigation></mgl-control>
+            <mgl-marker
+            [lngLat]="[shopAddress.lng, shopAddress.lat]"
+          >
+            <div
+              class="shop-marker"
+            >
+            </div>
+          </mgl-marker>
+            <ng-container *ngFor="let marker of markers | async">
+              <mgl-marker #orderMarker [lngLat]="marker.geometry.coordinates">
+                <div [ngStyle]="{'background':marker.properties.iconColor}" class="marker-container">
+                  <div class="marker">
+                    {{
+                    marker.properties.firstName
+                    }}
+                  </div>
+                </div>
+
+              </mgl-marker>
+              <mgl-popup [marker]="orderMarker">
+                <div>
+                  <h6>
+                    Customer Name:
+                    <span class="fw-semi-bold">{{marker.properties.order.customer_name}}</span>
+                  </h6>
+                  <h6>
+                    Order ID:
+                    <span class="fw-semi-bold"><a [routerLink]="['/app/orders/details',marker.properties.order.id]"
+                        target="_blank">{{marker.properties.order.id}}</a></span>
+                  </h6>
+                  <h6>
+                    Distance:
+                    <span class="fw-semi-bold">{{getDistance(marker.geometry.coordinates[1],marker.geometry.coordinates[0],shopAddress.lat,shopAddress.lng) + ' MI'}}</span>
+                  </h6>
+                  <h6>
+                    Status:
+                    <span class="badge badge-info" *ngIf="getStatus(marker.properties.order) === 'Pending'">
+                      Pending
+                    </span>
+                    <span class="badge badge-warning" *ngIf="getStatus(marker.properties.order) === 'Processing'">
+                      Processing
+                    </span>
+                    <span class="badge badge-success" *ngIf="getStatus(marker.properties.order) === 'Completed'">
+                      Completed
+                    </span>
+                  </h6>
+                  <div class="marker-container" style="float:right;" *ngIf="marker.properties.order.user">
+                    <div class="marker">
+                      {{marker.properties.order.user? getInitials(marker.properties.order.user.firstName,
+                      marker.properties.order.user.lastName):'' }}
+                    </div>
+                  </div>
+                </div>
+              </mgl-popup>
+            </ng-container>
+
+          </mgl-map>
+
+          <div class="widget-middle-overflow map-container">
+            <ul class="list-group list-group-flush" data-ui-jq="slimscroll" data-ui-options="{ height: '287px', size: '4px', borderRadius: '1px', opacity: .3 }">
+              <li class="list-group-item" *ngFor="let marker of markers | async" [hidden]="marker.properties.order.completed">
+                <div class="row " style="padding-bottom:10px">
+                  <div class="col">
+                    <time class="time">{{ marker.properties.order.created_at | amTimeAgo }}</time>
+                    <h6>
+                      Customer Name:
+                      <span class="fw-semi-bold">{{
+                        marker.properties.order.customer_name
+                        }}</span>
+                    </h6>
+                    <span class="badge badge-success" style="font-size:13px">
+                      {{ marker.properties.order.total_price | currency }}</span>
+                  </div>
+
+                  <div class="col offset-md-5">
+                    <p class="body">
+                      Order Status:
+                      <span class="badge badge-info" *ngIf="getStatus(marker.properties.order) === 'Pending'">
+                        Pending
+                      </span>
+                      <span class="badge badge-warning" *ngIf="getStatus(marker.properties.order) === 'Processing'">
+                        Processing
+                      </span>
+                      <span class="badge badge-success" *ngIf="getStatus(marker.properties.order) === 'Completed'">
+                        Completed
+                      </span>
+                    </p>
+                    <div class="name-container" *ngIf="marker.properties.order.user">
+                      <div class="name">
+                        {{
+                        getInitials(marker.properties.order.user.firstName, marker.properties.order.user.lastName)
+                        }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row justify-content-between">
+                  <div class="col-md-3 col-md-offset-3">
+                    <button type="button" [routerLink]="['/app/orders/details', marker.properties.order.id]" class="btn btn-danger btn-lg  ">
+                      View Details
+                    </button>
+                  </div>
+
+                </div>
+              </li>
+              <li class="list-group-item"></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>

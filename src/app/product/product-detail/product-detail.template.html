@@ -1,0 +1,9 @@
+
+<h1 class="page-title">Product Detail</h1>
+<banner [image]="product?.photo" [price] = "product?.base_price" [title]="product?.name" [id]="fieldId" (OnDelete)="deleteProduct()"></banner>
+
+<p-section title="Product Description" [isMobileTitleHidden]="true">
+  <description [description]="description"></description>
+</p-section>
+
+<p-confirmDialog header="Confirmation" appendTo="body" [responsive]="true" icon="pi pi-exclamation-triangle" ></p-confirmDialog>

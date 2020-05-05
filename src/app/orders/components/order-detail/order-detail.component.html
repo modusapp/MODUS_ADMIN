@@ -1,0 +1,167 @@
+<div class="container" *ngIf="ready">
+  <div class="row">
+    <div class="col-lg-12">
+      <section class="widget">
+        <header class="bb">
+          <h6>Order <span class="fw-semi-bold">Details</span></h6>
+
+        </header>
+        <div class="widget-body table-responsive">
+          <table class="table  w-auto " style="max-width:95%;">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Created At </th>
+                <th *ngIf="order.completed"> Completed At </th>
+                <th>Total</th>
+                <th>Customer Name</th>
+                <th>Phone Number</th>
+                <th># Items in Cart </th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{id}}</td>
+                <td> <time class="time">{{order.created_at | amTimeAgo}}</time>
+                </td>
+                 <td *ngIf="order.completed"> <time class="time">{{order.completed_at | amTimeAgo}}</time>
+                </td>
+                <td>{{order.total_price | currency}}
+                <td>{{order.customer_name? order.customer_name: ''}}</td>
+                <td>{{order.customer_phone? order.customer_phone: ''}}</td>
+                <td>{{order.order_items.length}} </td>
+
+
+              </tr>
+
+            </tbody>
+
+          </table>
+        </div>
+      </section>
+    </div>
+
+
+
+
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <section class="widget">
+        <header class="bb">
+          <h6 class="fw-semi-bold">Special Instructions</h6>
+          <p *ngIf="order.food_instructions">{{order.food_instructions}} </p>
+                    <p *ngIf="!order.food_instructions">No order instructions given. </p>
+
+        </header>
+      </section>
+    </div>
+    <div class="col-md-6" *ngIf="order.delivery_type === 'delivery'">
+      <section class="widget">
+        <header class="bb">
+          <h6 class="fw-semi-bold">Delivery Information</h6>
+          
+          <p *ngIf="order.delivery_info"> Address: <a [href]="convertAddressToLink(order.delivery_info.address)" target="_blank">{{order.delivery_info.address}}</a> </p>
+                    <p *ngIf="!order.instructions">No delivery instructions given. </p>
+
+        </header>
+      </section>
+    </div>
+    <div class="col-md-6" *ngIf="order?.delivery_type === 'pickUp' && order?.pickup_info">
+        <section class="widget">
+          <header class="bb">
+            <h6 class="fw-semi-bold">Pickup Information</h6>
+            <br><br>
+            <div class ="row">
+                <div class="col-3">
+                    <span class="widget-icon">
+                        <i class="fa fa-clock-o" [ngStyle]="{'color': isWithinPickupWindow(order?.pickup_info.start_time, order?.pickup_info.end_time) ? 'red': 'blue'}" ></i>
+                    </span>
+                </div>
+                <div class="col-9">
+                    <h6 class="no-margin">Pick Up Window</h6>
+                    <p class="h2 no-margin fw-normal">{{ order?.pickup_info.start_time |  amLocal | amDateFormat: 'hh:mm A' }} - {{ order?.pickup_info.end_time |  amLocal | amDateFormat: 'hh:mm A' }}</p>
+                    <p class="h2 no-margin fw-normal" *ngIf="order?.pickup_info.pickup_type">Pick Up Type: {{getPickupType(order?.pickup_info.pickup_type)}}</p>
+
+                    <p class="h2 no-margin fw-normal" *ngIf="order?.pickup_info.license_plate_no">License Plate No: {{ order?.pickup_info.license_plate_no }}</p>
+
+                </div>
+            </div>
+  
+          </header>
+        </section>
+      </div>
+    <div class="col-md-6">
+      <section class="widget">
+        <header>
+          <h3 class="fw-semi-bold order-status">Order Status:
+            <span class="badge badge-primary" *ngIf="!order.processing">Pending</span>
+            <span class="badge badge-warning" *ngIf="order.processing && !order.completed">Processing</span>
+            <span class="badge badge-success" *ngIf="order.processing && order.completed">Completed</span>
+
+          </h3>
+        </header>
+        <div class="widget-body status-form" *ngIf="!order.completed">
+          <label class="form-switch">
+            <input  type="checkbox" [checked]="order.processing" (change)="setProcessingStatus($event.target.checked)"  [disabled]="order.user && (order.user.uid !== this.auth.userInfo.uid)">
+            <i></i>
+            Processing
+          </label>
+          <button *ngIf="order.processing" type="button" style="float:right;" class="btn btn-success animated fadeInRight" (click)="setComplete()" [disabled]="order.user && (order.user.uid !== this.auth.userInfo.uid)"> Mark as Complete </button>
+
+        </div>
+        <div *ngIf="order.user" class="employee-section">
+              <div class="name-container">
+                <div class="name">
+                  {{
+                    getInitials(order.user.firstName, order.user.lastName)
+                  }}
+                </div>
+              </div>
+            </div>
+      </section>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-lg-12">
+      <section class="widget">
+        <header class="bb">
+          <h6>Order <span class="fw-semi-bold">Items</span></h6>
+
+        </header>
+
+        <div class="widget-body">
+          <div class="widget-middle-overflow">
+            <div class="list-group list-group-flush" data-ui-jq="slimscroll" data-ui-options="{ height: '287px', size: '4px', borderRadius: '1px', opacity: .3 }">
+              <div class="list-group-item" *ngFor="let item of order.order_items; let i = index;">
+                <a [href]="'#order item ' + i" class=" collapsed row no-link" #orderItem data-toggle="collapse" >
+
+                  <div class="col-md-6 col-xs-6">
+                    <img [src]="item.product.photo" class="img-fluid img-thumbnail" width="100px">
+
+                  </div>
+                  <div class=" col-md-4 col-xs-4">
+                    <h6>Product: <span class="fw-semi-bold">{{item.product.name}}</span></h6>
+                    <h6>Quantity: <span class="fw-semi-bold">{{item.quantity}}</span></h6>
+                    <h6>Product Price: <span class="badge badge-success" style="font-size:13px"> {{item.price | currency}}</span> </h6>
+
+                  </div>
+                  <div class="col-md-2 col-xs-2">
+                  <a style="float:right;" href="javascript:void(0)"><span><i class="fa"> </i></span> </a>
+                  </div>
+
+
+                </a>
+                <div class="collapse show" [id]="'order item ' + i">
+                  <item-description [description]="mapItem(item)" class="item-description"></item-description>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </div>

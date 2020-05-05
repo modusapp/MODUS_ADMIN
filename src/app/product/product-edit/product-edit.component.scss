@@ -1,0 +1,47 @@
+// component css goes here
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+#img-upload{
+    width: 100%;
+}
+.options-header{
+    margin-bottom:3rem;
+}
+
+.input-addon{
+    border-right: 0px;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+
+}
+ .option-box{
+    border-left:1px solid #e5e5e5;
+    padding-bottom: 5px;
+}
+.form-control.ng-invalid.ng-touched , .form-control.ng-invalid.ng-touched{
+    border: 1px solid red;
+}
+.form-check-input.ng-invalid.ng-touched , .form-check-input.ng-invalid.ng-touched{
+  border: 1px solid red;
+}
+.default-area{
+    display: -webkit-inline-box;
+}

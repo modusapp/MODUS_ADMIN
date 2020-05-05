@@ -1,0 +1,73 @@
+.history-table thead  tr  th {
+border:none !important;
+background-color:white !important;
+}
+.history-table tbody  tr  td {
+  border-left: none !important;
+  border-right: none !important;
+  background-color:white !important;
+  border-top: 1px solid #c8c8c8;
+  border-bottom: 1px solid #c8c8c8;
+  }
+
+.history-table-head th {
+  border:none !important;
+  background-color:white !important;
+}
+.history-table-head th.ui-state-highlight{
+ background-color: transparent !important;
+ color: #333333;
+}
+.history-table-head th.ui-state-highlight ::ng-deep  a{
+  color: #848484 !important;
+ }
+ .history-table-head th.ui-state-highlight ::ng-deep  a:hover{
+  color: #333333 !important;
+ }
+.history-table-body td{
+  border-left: none !important;
+  border-right: none !important;
+  background-color:white !important;
+  border-top: 1px solid #d6dee5;
+  border-bottom: 1px solid #d6dee5;
+  padding:0.55rem;
+  vertical-align:top;
+}
+.ui-sortable-column-icon {
+	float: left !important;
+	position: relative !important;
+}
+
+.sort-icons{
+  color: #848484 !important;
+
+}
+.history-table p-paginator div{
+  border:none !important;
+}
+.history-table-wrapper ::ng-deep .ui-paginator-bottom div{
+  border:none !important;
+
+}
+::ng-deep .ui-paginator-bottom{
+  border:none !important;
+
+}
+::ng-deep .ui-paginator-page.ui-state-active{
+background-color: #ffc247 !important;
+}
+.name-container{
+  width: 30px;
+  height: 30px;
+  border-radius: 100px;
+  background: #333;
+  display:-webkit-inline-box;
+  margin-left:20px;
+}
+.name{
+  width: 100%;
+  text-align: center;
+  color: white;
+
+  line-height: 30px;
+}

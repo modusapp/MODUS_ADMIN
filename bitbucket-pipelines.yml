@@ -1,0 +1,17 @@
+image: node:10.15.3
+pipelines:
+   branches:
+      master:
+        - step:
+            name: Deploy Application
+            caches:
+            - node
+            script: # The script below will build the application.
+            - npm install
+            - cd functions && npm install
+            - npm install -g @angular/cli firebase-tools
+            - ng build --prod --aot --build-optimizer --progress=false
+            - firebase functions:config:set payment.live=$LIVE_PAYMENT
+            - firebase deploy --token=$FIREBASE_TOKEN --project coffessions-server --non-interactive
+            artifacts:
+            - public/**
